@@ -51,9 +51,10 @@ These documents explain the new classes introduced, modifications to existing cl
 The following diagrams document the system architecture and object interactions.
 
 | Diagram | Link |
-| Stage 1 Class Diagram | [View] |
-| Stage 2 Class Diagram | [View] |
-| Stage 3 Class Diagram | [View] |
+| Stage 1 Class Diagram | [[View](https://drive.google.com/file/d/1CNwhMZSE6Hon056JCAtqE1oHpi189BLD/view?usp=drive_link)] |
+| Stage 2 Class Diagram | [[View](https://drive.google.com/file/d/1H0W2qUyfquhbD--LQkWJfLKEb5Cl5Ht2/view?usp=drive_link)] |
+| Stage 3 Class Diagram | [[View](https://drive.google.com/file/d/1YLhwF-0-YizMvUQXT4V89bGuDon_OZGL/view?usp=drive_link)] |
+| UML Class Diagram Summary of changes | [[View](https://drive.google.com/file/d/1Boo_DYNrF61C89oGqUU1A-T9B_MmQNo-/view?usp=drive_link)]
 | Sequence Diagram (Stage 2 or 3) | [View] |
 
 

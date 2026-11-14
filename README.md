@@ -9,7 +9,10 @@ Players manage a restaurant by making decisions, managing resources, and complet
 The project was developed incrementally across three stages, demonstrating the application of object-oriented programming principles and the ability to extend an existing software design to accommodate new requirements.
 
 2. Team Members
-
+- Leron Tan Yue Jun
+- Peh Jian Xiang
+- Teo Kai Xin (Zhang Kaixin)
+- Lin Xin-Ying, Synthia
 
 3. How to Run the Game
 
@@ -42,8 +45,9 @@ The following links show the changes made between development stages:
 
 Design Change Evidence
 
-- [Stage 1 to Stage 2 – Design Changes]
-- [Stage 2 to Stage 3 – Design Changes]
+- [Stage 1 to Stage 2 – Design Changes](https://github.com/IssaJayEx/SC2002Proj/compare/stage-1...stage-2)
+- [Stage 2 to Stage 3 – Design Changes](https://github.com/IssaJayEx/SC2002Proj/compare/stage-2...stage-3)
+
 These documents explain the new classes introduced, modifications to existing classes, and verification that earlier functionality remains correct.
 
 5. UML Diagrams
@@ -55,12 +59,12 @@ The following diagrams document the system architecture and object interactions.
 | Stage 2 Class Diagram | [[View](https://drive.google.com/file/d/107UNcWeR-5wQogJpz_U4N4AcyJJfqqvM/view?usp=drive_link)] |
 | Stage 3 Class Diagram | [[View](https://drive.google.com/file/d/1wIoiX-6jkjkcsm8fNaZhjZuaOdIRIdG7/view?usp=drive_link)] |
 | UML Class Diagram Summary of changes | [[View](https://drive.google.com/file/d/1Boo_DYNrF61C89oGqUU1A-T9B_MmQNo-/view?usp=drive_link)]
-| Sequence Diagram (Stage 2 or 3) | [View] |
+| Sequence Diagram (Stage 2 or 3) | [View](file:///C:/Users/asus/AppData/Local/Temp/ebe3d3b8-b735-4cc4-89c1-bf22b9e789db_RestaurantRushFInal.zip.9db/RestaurantRushFInal/docs/uml/VIPCustomerService/VIPCustomerService.svg) |
 
 
 6. Group Report
 
-[View Group Report]()
+[View Group Report](https://docs.google.com/document/d/1eza0u4I4o2yZUDNuThoSBxcqSQLoQZD6Hu_3XKYm8fo/edit?tab=t.u5pmf5ac0428#heading=h.su0ff2m2bfei)
 
 The report includes:
 - Design decisions and evolution across the three stages
@@ -70,7 +74,7 @@ The report includes:
 
 7. Recorded Presentation
 
-**Presentation Video:** [Insert Video Link]
+**Presentation Video:** [Video Link]()
 
 **Timestamps:**
 

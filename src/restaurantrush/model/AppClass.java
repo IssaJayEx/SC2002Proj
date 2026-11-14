@@ -21,6 +21,10 @@ public class AppClass {
 	private int customerCount = 0;
 	private PricingService pricingService = new PricingService();
 	
+	//stage 2 additions
+	private int vipArrival;
+	private int criticArrival;
+	
 	
 	public AppClass(CLI cli) {
 		this.cli = cli;
@@ -33,6 +37,12 @@ public class AppClass {
 		restaurant = new Restaurant (restaurantName, STARTING_TABLES, waiter, chef, cashier);
 		currentTurn = 0;
 		revenueInCents = 0;
+		
+		// stage 2 additions
+		vipArrival=random.nextInt(6)+1; 
+		do {
+			criticArrival = random.nextInt(6)+1;
+		} while (criticArrival == vipArrival);
 	}
 	
 	
@@ -72,12 +82,25 @@ public class AppClass {
 	public void handleArrivals() {
 		if ((currentTurn - 1) % 3 == 0) {
             customerCount+=1;
-            Customer customer = new RegularCustomer("Customer " + customerCount);
-            restaurant.addToQueue(customer);
+            Customer customer;
+            
+        // stage 2 additions
+            if (customerCount == vipArrival) {
+            	customer = new VIPCustomer("Customer " + customerCount + " (VIP!!)");
+            }
+            else if (customerCount == criticArrival) {
+            	customer = new CriticCustomer("Customer " + customerCount + " (Critic!!)");
+            }
+            else {
+            	customer = new RegularCustomer("Customer " + customerCount);
+            }
+        restaurant.addToQueue(customer);
         cli.showMessage("A new customer wants to eat at " + restaurant.getName() + "!!");
 		}
 		
 	}
+		
+            
 	
 	private void recordEatingCustomers() {
 		eatingAtTurnStart.clear();
@@ -159,7 +182,13 @@ public class AppClass {
 		restaurant.getWaiter().serve(order);
 		
 		cli.showMessage(customer.getName() + " has been served!");
-
+		
+		// stage 2 addition
+				String reaction = customer.onServed();
+				if (reaction != null) {
+					cli.showMessage(reaction);
+				}
+		
 		return true;
 	}
 	

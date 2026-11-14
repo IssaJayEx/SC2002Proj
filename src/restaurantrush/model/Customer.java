@@ -35,7 +35,6 @@ public abstract class Customer {
 			}
 		}
 	}
-
 	
 	public void seatAt(Table t) {
 		if (getStatus() != CustomerStatus.QUEUING) {
@@ -127,7 +126,22 @@ public abstract class Customer {
 		return this.satisfaction;
 	}
 	
-	public abstract int applyDiscount();
+	
+	// stage 2 additions 
+	
+	public String onServed() {
+		return null; 
+	}
+	
+	protected void reduceSatisfaction(int amount) {
+		satisfaction = Math.max(0,  satisfaction-amount); 
+	}
+	
+	public abstract int applyDiscount(); 
+	
+	public void gainSatisfaction(int amount) {
+		satisfaction = Math.min(MAXSATISFACTION, satisfaction + amount); 
+		}
 
 }
 

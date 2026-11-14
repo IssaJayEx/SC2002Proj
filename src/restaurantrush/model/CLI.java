@@ -101,10 +101,15 @@ public class CLI {
 		AppClass controller= new AppClass (new CLI());
 		controller.runGame();
 	}
-		
+	
+	// stage 2 addition 
+	
 	public void stageIntro() {
 		System.out.println("\n===== Your Customers =====");
 		System.out.println("Regular - lose 8 satisfaction per waiting turn, pays the full price");
+		System.out.println("VIP     - more patient, lose 5 satisfaction per waiting turn, gets a 10% discount");
+		System.out.println("Critic  - an impatient person, lose 12 satisfaction per waiting turn, pays the full price, and ");
+		System.out.println("          be more or less satisfied if served fast enough! (satisfaction above 70 when served) ");
 		System.out.println("\nTo win, have at least 4 paid customers, earn above $45 in revenue, and have an average       ");
 		System.out.println("satisfaction of 60 or more!");
 		

@@ -40,13 +40,8 @@ Stage Comparisons
 
 The following links show the changes made between development stages:
 
-- [Stage 1 → Stage 2]
-- [Stage 2 → Stage 3]
-
-Design Change Evidence
-
-- [Stage 1 to Stage 2 – Design Changes](https://github.com/IssaJayEx/SC2002Proj/compare/stage-1...stage-2)
-- [Stage 2 to Stage 3 – Design Changes](https://github.com/IssaJayEx/SC2002Proj/compare/stage-2...stage-3)
+- [Stage 1 → Stage 2](https://github.com/IssaJayEx/SC2002Proj/compare/stage-1...stage-2)
+- [Stage 2 → Stage 3](https://github.com/IssaJayEx/SC2002Proj/compare/stage-2...stage-3)
 
 These documents explain the new classes introduced, modifications to existing classes, and verification that earlier functionality remains correct.
 

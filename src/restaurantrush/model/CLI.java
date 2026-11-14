@@ -18,6 +18,17 @@ public class CLI {
 		System.out.println("Revenue: $" + String.format("%.2f" , game.getRevenueInCents() / 100.0));
 		System.out.println("Average satisfaction of paid customers: " + game.getAverageSatisfactionOfPaidCustomer());
 		
+		// stage 3 additions
+		if (game.getHappyHourTurnsLeft()>0) {
+			System.out.println(game.getHappyHourTurnsLeft() + " turn(s) left for HAPPY hour!!");
+		}
+		else if (!game.isHappyHourUsed()) {
+			System.out.println("HAPPY hours has not been used yet");
+		}
+		else {
+			System.out.println("You have used up all your HAPPY hours");
+		}
+		
 		if (restaurant.getWaitingQueue().isEmpty()) {
 			System.out.println("No customer is waiting outside " + restaurant.getName() + "!!");
 		}
@@ -39,6 +50,45 @@ public class CLI {
 			tableNo+=1;
 }
 }
+	
+	
+	// stage 3 additions 
+	
+	public boolean askHappyHour() {
+		while (true) {
+			System.out.println("\n Do you want to start HAPPY hour now?");
+			System.out.println("1. Yes");
+			System.out.println("2. Not yet");
+			System.out.println("Choose option: ");
+			switch(readChoice()) {
+				case 1: 
+					return true;
+				case 2:
+					return false;
+				default:
+					System.out.println("You chose an invalid number!");
+			}
+		}
+	}
+	
+	public HostAction askHostAction() {
+		while (true) {
+			System.out.println("\n===== Host Tasks=====");
+			System.out.println("1. Seat Customer");
+			System.out.println("2. Wait");
+			System.out.println("Choose task: ");
+			
+			switch(readChoice()) {
+				case 1:
+					return HostAction.SEAT;
+				case 2:
+					return HostAction.WAIT;
+				default:
+					System.out.println("You chose an invalid number!");
+			}
+			
+		}
+	}
 
 	
 	public WaiterAction askWaiterAction() {
@@ -110,10 +160,19 @@ public class CLI {
 		System.out.println("VIP     - more patient, lose 5 satisfaction per waiting turn, gets a 10% discount");
 		System.out.println("Critic  - an impatient person, lose 12 satisfaction per waiting turn, pays the full price, and ");
 		System.out.println("          be more or less satisfied if served fast enough! (satisfaction above 70 when served) ");
+		
+		System.out.println("\n===== What's new in stage 3!=====");
+		System.out.println("Host        - extra crew: seats one waiting customer per turn, on top of what your waiter currently does!");
+		System.out.println("Combo Meals - Two dishes in one order at 10% off, and cooking time is the sum of cooking time of both dishes!");
+		System.out.println("HAPPY Hour  - can be activated at most ONCE per game, at the start of any turn!");
+		System.out.println("It lasts 2 turns. Orders get 20% off on top of existing discounts, and customers waiting for either their food or");
+		System.out.println("a table recover 15 satisfaction too! (Capped at 100)");
 		System.out.println("\nTo win, have at least 4 paid customers, earn above $45 in revenue, and have an average       ");
 		System.out.println("satisfaction of 60 or more!");
 		
+		
 	}
+	
 		
 }
 

@@ -6,7 +6,11 @@ public class Menu {
     private final Food[] items = {
     		new Salad(),
     		new Burger(),
-    		new Pasta()
+    		new Pasta(),
+    		new ComboMeals(new Salad(), new Burger()),
+    		new ComboMeals(new Salad(), new Pasta()),
+    		new ComboMeals(new Pasta(), new Burger())
+    		
     };
     
     public int getSize() {

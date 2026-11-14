@@ -17,8 +17,10 @@ public class Restaurant {
 	private Cashier cashier;
 	private int numberOfTables;
 	private int nextOrderId = 1;
+	private Host host;
 	
-	public Restaurant(String name, int numberOfTables, Waiter waiter, Chef chef,Cashier cashier){
+	
+	public Restaurant(String name, int numberOfTables, Host host, Waiter waiter, Chef chef,Cashier cashier){
 		this.name=name;
 		this.menu = new Menu ();
 		this.tables = new ArrayList<Table>();
@@ -31,6 +33,7 @@ public class Restaurant {
 		this.chef = chef;
 		this.cashier = cashier;
 		this.numberOfTables=numberOfTables;
+		this.host = host;
 		
 	}
 	
@@ -91,6 +94,10 @@ public class Restaurant {
 		int id = nextOrderId;
 		nextOrderId+=1;
 		return id;
+	}
+	
+	public Host getHost() {
+		return host;
 	}
 	
 }

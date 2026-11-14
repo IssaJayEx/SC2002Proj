@@ -21,9 +21,15 @@ public class AppClass {
 	private int customerCount = 0;
 	private PricingService pricingService = new PricingService();
 	
+	
 	//stage 2 additions
 	private int vipArrival;
 	private int criticArrival;
+	
+	//stage 3 additions
+	private boolean happyHourUsed = false;
+	private int happyHourTurnsLeft = 0;
+	
 	
 	
 	public AppClass(CLI cli) {
@@ -34,7 +40,8 @@ public class AppClass {
 	    Waiter waiter = new Waiter();
 	    Chef chef = new Chef();
 	    Cashier cashier = new Cashier();
-		restaurant = new Restaurant (restaurantName, STARTING_TABLES, waiter, chef, cashier);
+	    Host host = new Host();
+		restaurant = new Restaurant (restaurantName, STARTING_TABLES, host, waiter, chef, cashier);
 		currentTurn = 0;
 		revenueInCents = 0;
 		
@@ -60,7 +67,7 @@ public class AppClass {
 		cli.showMessage(restaurant.getName() + " managed to make a total revenue of $" + String.format("%.2f", revenueInCents / 100.0) + " (Min to win =$45.00)");
 		cli.showMessage("The average satisfaction of " + restaurant.getName() + " is "  + getAverageSatisfactionOfPaidCustomer() + " (Min to win = 60)");
         if (evalResult() == Result.VICTORY) {
-        	cli.showMessage("You ran a SUCCESSFUL restaurant!! Ready for the next gamemode?");
+        	cli.showMessage("You ran a SUCCESSFUL restaurant!! YOU BEAT OUR GAME!! See you in another semester!");
         }
         else {
         	cli.showMessage("Unfortunately, there's still some work to do.. but let's try again!");
@@ -74,9 +81,11 @@ public class AppClass {
 		handleArrivals();
 		recordEatingCustomers();
 		cli.displayGameState(this);
+		checkHappyHour();
 		resolveServing();
 		EatingAndPayment();
 		applySatisfactionLoss();
+		endHappyHourTurn();
 		cli.showMessage("----- End Of Turn " + turn + " - Revenue: $" + String.format("%.2f", revenueInCents/100.0) + ", Paid Customers: " + paidCustomerCount + " -----");
 	}
 	public void handleArrivals() {
@@ -114,6 +123,10 @@ public class AppClass {
 	public void resolveServing() {
 		boolean doneAction = false;
 		while (!doneAction) {
+			doneAction = doHostAction(cli.askHostAction());
+		}
+		doneAction = false;
+		while (!doneAction) {
 			doneAction = doWaiterAction(cli.askWaiterAction());
 		}
 		doneAction = false;
@@ -122,12 +135,25 @@ public class AppClass {
 		}
 	}
 	
+
+	private boolean doHostAction(HostAction action) {
+		switch(action){
+			case WAIT:
+				return true;
+			case SEAT:
+				return seatCustomer(restaurant.getHost());
+			default:
+				return false;
+		}
+		
+		
+		}
 	private boolean doWaiterAction(WaiterAction action) {
 		switch(action) {
 			case WAIT:
 				return true;
 			case SEAT:
-				return seatCustomer();
+				return seatCustomer(restaurant.getWaiter());
 			case TAKE_ORDER:
 				return takeOrder();
 			case SERVE:
@@ -137,14 +163,14 @@ public class AppClass {
 		}
 	}
 	
-	private boolean seatCustomer() {
+	private boolean seatCustomer(SeatingStaff staff) {
 		Table table = restaurant.findFreeTable();
 		Customer customer = restaurant.getWaitingQueue().peek();
 		if (table == null || customer == null) {
 			cli.showMessage("No free tables or waiting customers!!");
 			return false;
 			}
-		restaurant.getWaiter().seat(customer,table);
+		staff.seat(customer, table);
 		restaurant.removeFromQueue(customer);
 		cli.showMessage(customer.getName() + " is seated at Table " + (restaurant.getTables().indexOf(table)+1));
 		return true;
@@ -165,7 +191,7 @@ public class AppClass {
 		Order order = new Order(restaurant.generateOrderId(), customer, food, price);
 		customer.placeOrder(order);
 		restaurant.addOrder(order);
-		cli.showMessage(customer.getName() + " ordered " + customer.getChoice().getName() + "!");
+		cli.showMessage(customer.getName() + " ordered " + customer.getChoice().getName());
 		return true;
 	}
 	
@@ -207,7 +233,7 @@ public class AppClass {
 					return false;
 				}
 				restaurant.getChef().advance(order);
-				cli.showMessage("Your chef cooked one unit of " + customer.getName() + "'s order. Status: " + order.getStatus());
+				cli.showMessage("\nYour chef cooked one unit of " + customer.getName() + "'s order. Status: " + order.getStatus());
 				return true;
 			default:
 				return false;
@@ -306,6 +332,53 @@ public class AppClass {
 			
 		}
 	}
+	
+	// stage 3 additions
+	
+	public void checkHappyHour() {
+		if (!happyHourUsed && cli.askHappyHour()) {
+			happyHourUsed = true;
+			happyHourTurnsLeft = 2;
+			pricingService.setHappyHourActive(true);
+			cli.showMessage("HAPPY hour has started!! 20% off all orders for this turn and the next turn");
+		}
+		if (happyHourTurnsLeft>0) {
+			for (Customer c: restaurant.getWaitingQueue()) {
+				c.gainSatisfaction(15);
+			}
+			for (Table table: restaurant.getTables()) {
+				if (table.isOccupied()) {
+					Customer c = table.getCustomer();
+					CustomerStatus status = c.getStatus();
+					if (status == CustomerStatus.SEATED || status == CustomerStatus.WAITING_FOR_FOOD || status == CustomerStatus.READY_TO_SERVE) {
+						c.gainSatisfaction(15);
+						}
+				}
+			}
+			cli.showMessage("All waiting customers recovered 15 satisfaction!!");
+			
+			
+		}
+	}
+	
+	public void endHappyHourTurn() {
+		if (happyHourTurnsLeft>0) {
+			happyHourTurnsLeft -=1;
+			if (happyHourTurnsLeft ==0) {
+				pricingService.setHappyHourActive(false);
+				cli.showMessage("HAPPY hour has unfortunately ended");
+			}
+		}
+	}
+	
+	public int getHappyHourTurnsLeft() {
+		return happyHourTurnsLeft;
+	}
+	
+	public boolean isHappyHourUsed() {
+		return happyHourUsed;
+	}
+	
 	
 
 }

@@ -54,7 +54,7 @@ The following diagrams document the system architecture and object interactions.
 | Stage 2 Class Diagram | [[View](https://drive.google.com/file/d/107UNcWeR-5wQogJpz_U4N4AcyJJfqqvM/view?usp=drive_link)] |
 | Stage 3 Class Diagram | [[View](https://drive.google.com/file/d/1wIoiX-6jkjkcsm8fNaZhjZuaOdIRIdG7/view?usp=drive_link)] |
 | UML Class Diagram Summary of changes | [[View](https://drive.google.com/file/d/1Boo_DYNrF61C89oGqUU1A-T9B_MmQNo-/view?usp=drive_link)]
-| Sequence Diagram (Stage 2) | [View](file:///C:/Users/asus/AppData/Local/Temp/ebe3d3b8-b735-4cc4-89c1-bf22b9e789db_RestaurantRushFInal.zip.9db/RestaurantRushFInal/docs/uml/VIPCustomerService/VIPCustomerService.svg) |
+| Sequence Diagram (Stage 2) | [View]() |
 
 
 6. Group Report

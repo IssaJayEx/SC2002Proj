@@ -1,0 +1,438 @@
+@startuml
+
+' Restaurant Rush - Stage 3 (final) class diagram
+' Mirrors the Stage 3 source in package restaurantrush.model as-is.
+
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+skinparam nodesep 60
+skinparam ranksep 70
+hide empty members
+
+' ===================== Boundary / Control =====================
+
+class CLI <<boundary>> {
+  - sc : Scanner
+  + askRestaurantName() : String
+  + displayGameState(game : AppClass) : void
+  + askWaiterAction() : WaiterAction
+  + askChefAction() : ChefAction
+  + askHostAction() : HostAction
+  + askHappyHour() : boolean
+  + askTableNumber() : int
+  + readChoice() : int
+  + showMessage(msg : String) : void
+  + stageIntro() : void
+  + {static} main(args : String[]) : void
+}
+
+class AppClass <<control>> {
+  + {static} MAX_TURNS : int = 18 {readOnly}
+  + {static} STARTING_TABLES : int = 2 {readOnly}
+  - cli : CLI
+  - restaurant : Restaurant
+  - pricingService : PricingService
+  - random : Random
+  - currentTurn : int
+  - revenueInCents : int
+  - paidCustomerCount : int
+  - totalSatisfactionOfPaidCustomer : int
+  - customerCount : int
+  - eatingAtTurnStart : List<Customer>
+  - readyToPayLine : Queue<Customer>
+  - vipArrival : int
+  - criticArrival : int
+  - happyHourUsed : boolean = false
+  - happyHourTurnsLeft : int = 0
+  --
+  + AppClass(cli : CLI)
+  + initialiseGame(restaurantName : String) : void
+  + runGame() : void
+  + runTurn(turn : int) : void
+  + handleArrivals() : void
+  - recordEatingCustomers() : void
+  + resolveServing() : void
+  - doHostAction(action : HostAction) : boolean
+  - doWaiterAction(action : WaiterAction) : boolean
+  - seatCustomer(staff : SeatingStaff) : boolean
+  + takeOrder() : boolean
+  - serveOrder() : boolean
+  - doChefAction(action : ChefAction) : boolean
+  - askSeatedCustomer() : Customer
+  + EatingAndPayment() : void
+  + applySatisfactionLoss() : void
+  + evalResult() : Result
+  + getRestaurant() : Restaurant
+  + getCurrentTurn() : int
+  + getRevenueInCents() : int
+  + getPaidCustomerCount() : int
+  + getAverageSatisfactionOfPaidCustomer() : int
+  + checkHappyHour() : void
+  + endHappyHourTurn() : void
+  + getHappyHourTurnsLeft() : int
+  + isHappyHourUsed() : boolean
+}
+
+class PricingService {
+  - happyHourActive : boolean = false
+  --
+  + setHappyHourActive(active : boolean) : void
+  + calculateFinalPrice(c : Customer, f : Food) : int
+}
+
+' ===================== Core entities =====================
+
+class Restaurant {
+  - name : String
+  - menu : Menu
+  - tables : List<Table>
+  - waitingQueue : Queue<Customer>
+  - orders : List<Order>
+  - waiter : Waiter
+  - chef : Chef
+  - cashier : Cashier
+  - host : Host
+  - numberOfTables : int
+  - nextOrderId : int = 1
+  --
+  + Restaurant(name : String, numberOfTables : int, host : Host, waiter : Waiter, chef : Chef, cashier : Cashier)
+  + getName() : String
+  + getNumOfTables() : int
+  + getMenu() : Menu
+  + getTables() : List<Table>
+  + getWaitingQueue() : Queue<Customer>
+  + addToQueue(c : Customer) : void
+  + removeFromQueue(c : Customer) : void
+  + findFreeTable() : Table
+  + addOrder(ordered : Order) : void
+  + generateOrderId() : int
+  + getWaiter() : Waiter
+  + getChef() : Chef
+  + getCashier() : Cashier
+  + getHost() : Host
+}
+
+class SeatingStaff {
+  + seat(c : Customer, t : Table) : void
+}
+
+class Host {
+}
+
+class Waiter {
+  + serve(ordered : Order) : void
+}
+
+class Chef {
+  + advance(o : Order) : void
+}
+
+class Cashier {
+  + collectPayment(o : Order) : void
+}
+
+abstract class Customer <<entity>> {
+  + {static} MAXSATISFACTION : int = 100 {readOnly}
+  - name : String {readOnly}
+  - satisfaction : Integer = 100
+  - table : Table
+  - order : Order
+  - choice : Food
+  - abandon : Boolean = false
+  --
+  # Customer(name : String)
+  + {abstract} getSatisfactionLossPerTurn() : int
+  + {abstract} applyDiscount() : int
+  + loseSatisfaction(amount : int) : void
+  + gainSatisfaction(amount : int) : void
+  # reduceSatisfaction(amount : int) : void
+  + onServed() : String
+  + seatAt(t : Table) : void
+  + chooseItem(menu : Menu, random : Random) : void
+  + getChoice() : Food
+  + placeOrder(o : Order) : void
+  + isServed() : boolean
+  + isAbandoned() : boolean
+  + isReadyPay() : boolean
+  + getOrder() : Order
+  + getTable() : Table
+  + getStatus() : CustomerStatus
+  + getName() : String
+  + getSatisfaction() : int
+}
+
+class RegularCustomer <<entity>> {
+  + RegularCustomer(name : String)
+  + getSatisfactionLossPerTurn() : int
+  + applyDiscount() : int
+}
+
+class Order <<entity>> {
+  - id : int
+  - customer : Customer {readOnly}
+  - item : Food {readOnly}
+  - priceInCents : int {readOnly}
+  - status : OrderStatus
+  - preparationUnitsRemaining : int
+  --
+  + Order(id : int, customer : Customer, item : Food, priceInCents : int)
+  + getPriceInCents() : int
+  + getStatus() : OrderStatus
+  + prepareOneUnit() : void
+  + markReady() : void
+  + markServed() : void
+  + markReadyPay() : void
+  + markPaid() : void
+  + markCancelled() : void
+}
+
+class Table <<entity>> {
+  - id : int {readOnly}
+  - occupied : boolean
+  - curCustomer : Customer
+  --
+  + Table(id : int)
+  + occupy(c : Customer) : void
+  + free() : void
+  + isOccupied() : boolean
+  + getCustomer() : Customer
+}
+
+class VIPCustomer <<entity>> {
+  + VIPCustomer(name : String)
+  + getSatisfactionLossPerTurn() : int
+  + applyDiscount() : int
+}
+note bottom of VIPCustomer : loses 5 per waiting turn, 10% discount
+
+class CriticCustomer <<entity>> {
+  + CriticCustomer(name : String)
+  + getSatisfactionLossPerTurn() : int
+  + applyDiscount() : int
+  + onServed() : String
+}
+note bottom of CriticCustomer
+  loses 12 per waiting turn, full price.
+  When served: satisfaction >= 70 gives +10,
+  otherwise -10.
+end note
+
+' ===================== Food =====================
+
+class Menu {
+  - items : Food[] {readOnly}
+  --
+  + getSize() : int
+  + getItem(index : int) : Food
+  + getRandomItem(r : Random) : Food
+}
+
+abstract class Food <<entity>> {
+  - foodName : String {readOnly}
+  - priceInCents : int {readOnly}
+  --
+  # Food(name : String, priceInCents : int)
+  + getName() : String
+  + getPrice() : int
+  + {abstract} getPrepUnits() : int
+}
+
+class Salad <<entity>> {
+  + Salad()
+  + getPrepUnits() : int
+}
+note bottom of Salad : price 900 cents, 1 unit
+
+class Burger <<entity>> {
+  + Burger()
+  + getPrepUnits() : int
+}
+note bottom of Burger : price 1500 cents, 1 unit
+
+class Pasta <<entity>> {
+  + Pasta()
+  + getPrepUnits() : int
+}
+note bottom of Pasta : price 1800 cents, 2 units
+
+class ComboMeals <<entity>> {
+  - firstOption : Food
+  - secondOption : Food
+  --
+  + ComboMeals(firstOption : Food, secondOption : Food)
+  + getPrepUnits() : int
+}
+note bottom of ComboMeals
+  price = 90% of the two components, rounded
+  prep units = sum of the two components
+end note
+
+' ===================== Enumerations =====================
+
+enum OrderStatus <<enumeration>> {
+  WAITING
+  PREPARING
+  READY
+  SERVED
+  READY_TO_PAY
+  PAID
+  CANCELLED
+}
+
+enum CustomerStatus <<enumeration>> {
+  QUEUING
+  SEATED
+  WAITING_FOR_FOOD
+  READY_TO_SERVE
+  EATING
+  READY_TO_PAY
+  PAID
+  ABANDONED
+}
+
+enum HostAction <<enumeration>> {
+  SEAT
+  WAIT
+}
+
+enum WaiterAction <<enumeration>> {
+  SEAT
+  TAKE_ORDER
+  SERVE
+  WAIT
+}
+
+enum ChefAction <<enumeration>> {
+  PREPARE
+  WAIT
+}
+
+enum Result <<enumeration>> {
+  VICTORY
+  DEFEAT
+}
+
+' ===================== Relationships =====================
+
+' --- boundary <-> control
+AppClass "1" --> "1" CLI : -cli
+CLI ..> AppClass : <<create>> / reads state
+CLI ..> WaiterAction
+CLI ..> HostAction
+CLI ..> ChefAction
+
+' --- control owns the game objects
+AppClass "1" *-- "1" Restaurant : -restaurant
+AppClass "1" *-- "1" PricingService : -pricingService
+AppClass "1" o-- "0..*" Customer : eatingAtTurnStart\nreadyToPayLine
+AppClass ..> Result
+AppClass ..> WaiterAction
+AppClass ..> HostAction
+AppClass ..> SeatingStaff : seatCustomer()
+AppClass ..> ChefAction
+AppClass ..> Order : <<create>>
+
+' --- restaurant structure
+Restaurant "1" *-- "1" Menu : -menu
+Restaurant "1" *-- "1..*" Table : -tables
+Restaurant "1" o-- "1" Host : -host
+Restaurant "1" o-- "1" Waiter : -waiter
+Restaurant "1" o-- "1" Chef : -chef
+Restaurant "1" o-- "1" Cashier : -cashier
+Restaurant "1" o-- "0..*" Customer : -waitingQueue
+Restaurant "1" o-- "0..*" Order : -orders
+
+' --- menu and food
+Menu "1" *-- "6" Food : -items
+Food <|-- Salad
+Food <|-- Burger
+Food <|-- Pasta
+Food <|-- ComboMeals
+ComboMeals "0..*" o-- "2" Food : -firstOption\n-secondOption
+
+' --- customers, orders, tables
+Customer <|-- RegularCustomer
+Customer <|-- VIPCustomer
+Customer <|-- CriticCustomer
+AppClass ..> RegularCustomer : <<create>>
+AppClass ..> VIPCustomer : <<create>>
+AppClass ..> CriticCustomer : <<create>>
+AppClass ..> CustomerStatus
+Customer "1" -- "0..1" Order : order / customer
+Customer "0..1" -- "0..1" Table : table / curCustomer
+Customer "0..*" --> "0..1" Food : -choice
+Order "0..*" --> "1" Food : -item
+Order --> "1" OrderStatus : -status
+Customer ..> CustomerStatus
+Customer ..> Menu : chooseItem()
+
+' --- staff act on domain objects (dependencies)
+SeatingStaff <|-- Host
+SeatingStaff <|-- Waiter
+SeatingStaff ..> Customer
+SeatingStaff ..> Table
+Waiter ..> Order
+Chef ..> Order
+Cashier ..> Order
+PricingService ..> Customer
+PricingService ..> Food
+
+' ===================== OO annotations =====================
+
+note right of Order
+  <b>Encapsulation</b>
+  status only changes through
+  prepareOneUnit() / markX(),
+  each guarding the legal
+  state transition.
+end note
+
+note left of Food
+  <b>Polymorphism</b>
+  getPrepUnits() is overridden
+  by Salad, Burger and Pasta.
+end note
+
+note right of Customer
+  <b>Polymorphism</b>
+  getSatisfactionLossPerTurn() and
+  applyDiscount() are dispatched to
+  Regular, VIP or Critic. onServed() is
+  a default hook (returns null) that
+  only Critic overrides, so AppClass
+  needs no customer type checks.
+  getStatus() is derived from the
+  Order's state, not stored.
+end note
+
+note top of Restaurant
+  <b>Composition</b>
+  Restaurant creates and owns its
+  Menu and Tables; staff are
+  created by AppClass and passed in
+  (aggregation).
+end note
+
+note left of SeatingStaff
+  <b>Inheritance</b>
+  Host and Waiter inherit seat().
+  AppClass.seatCustomer(staff) accepts
+  either one as a SeatingStaff.
+end note
+
+note right of ComboMeals
+  <b>Polymorphism</b>
+  A combo is a Food made of two Foods.
+  Order, Customer and PricingService
+  treat it like any other Food.
+end note
+
+note right of PricingService
+  <b>Happy Hour (pricing)</b>
+  While happyHourActive is true, new
+  orders get 20% off, after the
+  customer's own discount.
+  AppClass tracks the once-per-game
+  use and the 2-turn duration.
+end note
+@enduml

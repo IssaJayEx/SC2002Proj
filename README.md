@@ -17,12 +17,12 @@ The project was developed incrementally across three stages, demonstrating the a
 3. How to Run the Game
 
 **Requirements**
-- Java JDK [Version]
+- Java Development Kit (JDK): Version 21 or higher
 - Visual Studio Code or another Java-compatible IDE
 
 **Instructions**
 1. Clone the repository.
-2. Open the project folder in VS Code.
+2. Open the project folder in VS Code or equivalent.
 3. Locate the main Java class.
 4. Run the main method to start the game.
 5. Follow the instructions displayed in the terminal.

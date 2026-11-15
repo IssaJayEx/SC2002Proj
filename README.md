@@ -46,6 +46,7 @@ The project was developed incrementally across three stages, demonstrating the a
 The project was developed in three incremental stages, with each stage extending the previous version.
 
 | Stage | Description | GitHub Link |
+|---|---|---|
 | Stage 1 | Initial playable version of Restaurant Rush | [Stage 1](../../tree/stage-1) |
 | Stage 2 | Extension of Stage 1 with additional requirements | [Stage 2](../../tree/stage-2) |
 | Stage 3 | Extension of Stage 2 with further requirements | [Stage 3](../../tree/stage-3) |
@@ -64,11 +65,12 @@ These documents explain the new classes introduced, modifications to existing cl
 The following diagrams document the system architecture and object interactions.
 
 | Diagram | Link |
+|---|---|
 | Stage 1 Class Diagram | [[View](https://drive.google.com/file/d/1xsU8EVaEe9ULcECXE2c9iNkeMvLou1sp/view?usp=drive_link)] |
 | Stage 2 Class Diagram | [[View](https://drive.google.com/file/d/107UNcWeR-5wQogJpz_U4N4AcyJJfqqvM/view?usp=drive_link)] |
 | Stage 3 Class Diagram | [[View](https://drive.google.com/file/d/1wIoiX-6jkjkcsm8fNaZhjZuaOdIRIdG7/view?usp=drive_link)] |
 | UML Class Diagram Summary of changes | [[View](https://drive.google.com/file/d/1Boo_DYNrF61C89oGqUU1A-T9B_MmQNo-/view?usp=drive_link)]
-| Sequence Diagram (Stage 2) | [View]() |
+| Stage 2 Sequence Diagram  | [[View Diagram](docs/uml-sequence-diagram/sequence-diagram.svg)] · [[View Source Code](docs/uml-sequence-diagram/sequence-diagram.puml)] |
 
 
 6. Group Report

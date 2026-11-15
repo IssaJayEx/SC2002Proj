@@ -21,6 +21,7 @@ The project was developed incrementally across three stages, demonstrating the a
 - Eclipse IDE or another Java-compatible IDE
 
 **Instructions**
+
     1. Open Terminal and enter:
         - cd ~ 
         - cd ~/Desktop

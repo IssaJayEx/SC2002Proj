@@ -85,9 +85,10 @@ The report includes:
 
 7. Recorded Presentation
 
-**Presentation Video:** [Video Link]()
+**Presentation Video:** [Video Link](https://drive.google.com/file/d/1qJmgEnlU0hzyrImOOjlKYCOA3XUp3sIZ/view?usp=sharing)
 
 **Timestamps:**
+
 #1 Game launching from submitted project: 0:28
 
 #2 Meaningful manager choices: 01:33
@@ -95,16 +96,17 @@ The report includes:
 #3 Dish going READY -> SERVED -> payment: 01:11
 
 #4 Critic Behaviour -> 01:42
+    VIP Behaviour -> 01:56
    
-   VIP Behaviour -> 01:56
-   
-#5 Stage 3 Feature -> Host Action: 03:50               
-                      Happy Hour: 03:53
-#6 Victory: Done -> 00:51 to 02:20
+#5 Stage 3 Feature -> Host Action: 03:50
+    
 
-   Defeat:  02:24 to 03:25
+Happy Hour: 03:53
+                      
+#6 Victory: Done -> 00:51 to 02:20 
+    Defeat:  02:24 to 03:25
    
-#7: UML Class Diagram: 04:04
+#7: UML Class Diagram: 04:04 
     UML Sequence Diagram 08:27
     
 #8: Reflection 12:44

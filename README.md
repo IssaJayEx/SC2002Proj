@@ -22,18 +22,18 @@ The project was developed incrementally across three stages, demonstrating the a
 
 **Instructions**
     1. Open Terminal and enter:
-    - cd ~
-    - cd ~/Desktop
-    - git clone https://github.com/IssaJayEx/SC2002Proj.git
-    - cd SC2002Proj
-    - git checkout stage-1 (or stage-2/stage-3 as according)
-    3. Open Eclipse IDE
-    4. File -> New -> Java Project
-    - Name it "SC2002Proj" (Note: Do not have any SC2002Proj files)
-    - Untick "Use Default Location"
-    5. Find SC2002Proj file in Desktop and Finish
-    7. Open src -> restaurantrush.model
-    8. right click CLI.java -> run as -> Java Application
+        - cd ~ 
+        - cd ~/Desktop
+        - git clone https://github.com/IssaJayEx/SC2002Proj.git
+        - cd SC2002Proj
+        - git checkout stage-1 (or stage-2/stage-3 as according)
+    2. Open Eclipse IDE
+    3. File -> New -> Java Project
+        - Name it "SC2002Proj" (Note: Do not have any SC2002Proj files)
+        - Untick "Use Default Location"
+    4. Find SC2002Proj file in Desktop and Finish
+    5. Open src -> restaurantrush.model
+    6. right click CLI.java -> run as -> Java Application
 
 4. Development Stages
 

@@ -39,7 +39,7 @@ The project was developed incrementally across three stages, demonstrating the a
 
     5. Open src -> restaurantrush.model
 
-    6. right click CLI.java -> run as -> Java Application
+    6. Right click CLI.java -> run as -> Java Application
 
 4. Development Stages
 

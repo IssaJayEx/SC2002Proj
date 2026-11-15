@@ -18,14 +18,23 @@ The project was developed incrementally across three stages, demonstrating the a
 
 **Requirements**
 - Java Development Kit (JDK): Version 21 or higher
-- Visual Studio Code or another Java-compatible IDE
+- Eclipse IDE or another Java-compatible IDE
 
 **Instructions**
-1. Clone the repository.
-2. Open the project folder in VS Code or equivalent.
-3. Locate the main Java class.
-4. Run the main method to start the game.
-5. Follow the instructions displayed in the terminal.
+1. Open Terminal and enter:
+    cd ~
+    cd ~/Desktop
+    git clone https://github.com/IssaJayEx/SC2002Proj.git
+    cd SC2002Proj
+    git checkout stage-1 (or stage-2/stage-3 as according)
+2. Open Eclipse IDE
+3. File -> New -> Java Project
+    Name it "SC2002Proj" (Note: Do not have any SC2002Proj files)
+    Untick "Use Default Location"
+4. Find SC2002Proj file in Desktop
+5. Finish
+6. Open src -> restaurantrush.model
+7. right click CLI.java -> run as -> Java Application
 
 4. Development Stages
 

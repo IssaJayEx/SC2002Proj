@@ -89,16 +89,24 @@ The report includes:
 
 **Timestamps:**
 #1 Game launching from submitted project: 0:28
+
 #2 Meaningful manager choices: 01:33
+
 #3 Dish going READY -> SERVED -> payment: 01:11
+
 #4 Critic Behaviour -> 01:42
+   
    VIP Behaviour -> 01:56
-#5 Stage 3 Feature -> Host Action: 03:50
+   
+#5 Stage 3 Feature -> Host Action: 03:50               
                       Happy Hour: 03:53
 #6 Victory: Done -> 00:51 to 02:20
+
    Defeat:  02:24 to 03:25
+   
 #7: UML Class Diagram: 04:04
     UML Sequence Diagram 08:27
+    
 #8: Reflection 12:44
 
 

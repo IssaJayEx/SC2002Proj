@@ -66,9 +66,9 @@ The following diagrams document the system architecture and object interactions.
 
 | Diagram | Link |
 |---|---|
-| Stage 1 Class Diagram | [[View](https://drive.google.com/file/d/1xsU8EVaEe9ULcECXE2c9iNkeMvLou1sp/view?usp=drive_link)] |
-| Stage 2 Class Diagram | [[View](https://drive.google.com/file/d/107UNcWeR-5wQogJpz_U4N4AcyJJfqqvM/view?usp=drive_link)] |
-| Stage 3 Class Diagram | [[View](https://drive.google.com/file/d/1wIoiX-6jkjkcsm8fNaZhjZuaOdIRIdG7/view?usp=drive_link)] |
+| Stage 1 Class Diagram | [[View Diagram](docs/uml-class-diagrams/class-diagram-stage-1.drawio.svg)] · [[View Source](docs/uml-class-diagrams/class-diagram-stage-1.puml)] |
+| Stage 2 Class Diagram | [[View Diagram](docs/uml-class-diagrams/class-diagram-stage-2.drawio.svg)] · [[View Source](docs/uml-class-diagrams/class-diagram-stage-2.puml)] |
+| Stage 3 Class Diagram | [[View Diagram](docs/uml-class-diagrams/class-diagram-stage-3.drawio.svg)] · [[View Source](docs/uml-class-diagrams/class-diagram-stage-3.puml)] |
 | UML Class Diagram Summary of changes | [[View](https://drive.google.com/file/d/1Boo_DYNrF61C89oGqUU1A-T9B_MmQNo-/view?usp=drive_link)]
 | Stage 2 Sequence Diagram  | [[View Diagram](docs/uml-sequence-diagram/sequence-diagram.svg)] · [[View Source Code](docs/uml-sequence-diagram/sequence-diagram.puml)] |
 

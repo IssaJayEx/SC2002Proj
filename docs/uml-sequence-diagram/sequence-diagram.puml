@@ -1,0 +1,688 @@
+@startuml
+skinparam sequenceMessageAlign center
+title VIP Customer Service: From Arrival to Payment (Stage 2)
+
+actor Manager
+participant "cli:CLI" as CLI
+participant "controller:AppClass" as C
+participant "restaurant:Restaurant" as R
+participant "waiter:Waiter" as W
+participant "table1:Table" as T
+participant "vip:VIPCustomer" as VIP
+participant "menu:Menu" as M
+participant "pricingService:PricingService" as P
+participant "food:Pasta" as F
+participant "order:Order" as O
+participant "chef:Chef" as Chef
+participant "cashier:Cashier" as Cashier
+
+note over CLI,VIP
+Illustrative scenario: a VIP arrives in Turn 1 and chooses Pasta.
+Actual arrivals and food choices may differ between runs.
+Restaurant, staff and menu are already initialized.
+end note
+
+C -> C: runGame()
+activate C
+note right of C
+The full game runs for 18 turns.
+Only key interactions in this scenario are expanded.
+end note
+
+== TURN 1: VIP ARRIVAL AND SEATING (FULL TURN) ==
+C -> C: runTurn(1)
+activate C
+C -> C: handleArrivals()
+activate C
+opt [scheduled arrival is VIP]
+    create VIP
+    C -> VIP: new VIPCustomer(name)
+    activate VIP
+    deactivate VIP
+    C -> R: addToQueue(customer)
+    activate R
+    deactivate R
+    C -> R: getName()
+    activate R
+    R -->> C: restaurantName
+    deactivate R
+    C -> CLI: showMessage(arrival message)
+    activate CLI
+    deactivate CLI
+end
+deactivate C
+
+C -> C: recordEatingCustomers()
+activate C
+C -> R: getTables()
+activate R
+R -->> C: tables
+deactivate R
+loop [for each table]
+    C -> T: isOccupied()
+    activate T
+    T -->> C: false
+    deactivate T
+end
+note right of C
+All tables are empty at the start of Turn 1.
+eatingAtTurnStart is empty.
+end note
+deactivate C
+
+C -> CLI: displayGameState(this)
+activate CLI
+deactivate CLI
+C -> C: resolveServing()
+activate C
+loop [until a valid Waiter action]
+    C -> CLI: askWaiterAction()
+    activate CLI
+    CLI -> CLI: readChoice()
+    activate CLI
+    Manager -> CLI: input 1 (SEAT)
+    CLI -->> CLI: 1
+    deactivate CLI
+    CLI -->> C: WaiterAction.SEAT
+    deactivate CLI
+    C -> C: doWaiterAction(SEAT)
+    activate C
+    C -> C: seatCustomer()
+    activate C
+    C -> R: findFreeTable()
+    activate R
+    R -> T: isOccupied()
+    activate T
+    T -->> R: false
+    deactivate T
+    R -->> C: table1
+    deactivate R
+    C -> R: getWaitingQueue()
+    activate R
+    R -->> C: queue (VIP at head)
+    deactivate R
+    opt [table != null and customer != null]
+        C -> R: getWaiter()
+        activate R
+        R -->> C: waiter
+        deactivate R
+        C -> W: seat(customer, table)
+        activate W
+        W -> T: isOccupied()
+        activate T
+        T -->> W: false
+        deactivate T
+        W -> T: occupy(customer)
+        activate T
+        deactivate T
+        W -> VIP: seatAt(table)
+        activate VIP
+        deactivate VIP
+        deactivate W
+        C -> R: removeFromQueue(customer)
+        activate R
+        deactivate R
+        C -> VIP: getName()
+        activate VIP
+        VIP -->> C: customerName
+        deactivate VIP
+        C -> R: getTables()
+        activate R
+        R -->> C: tables
+        deactivate R
+        C -> CLI: showMessage(seating confirmation)
+        activate CLI
+        deactivate CLI
+    end
+    C -->> C: true (seatCustomer)
+    deactivate C
+    C -->> C: true (doWaiterAction)
+    deactivate C
+end
+loop [until a valid Chef action]
+    C -> CLI: askChefAction()
+    activate CLI
+    CLI -> CLI: readChoice()
+    activate CLI
+    Manager -> CLI: input 2 (WAIT)
+    CLI -->> CLI: 2
+    deactivate CLI
+    CLI -->> C: ChefAction.WAIT
+    deactivate CLI
+    C -> C: doChefAction(WAIT)
+    activate C
+    C -->> C: true
+    deactivate C
+end
+deactivate C
+
+C -> C: EatingAndPayment()
+activate C
+note right of C
+readyToPayLine.poll() is null; no diner finishes eating.
+end note
+deactivate C
+
+C -> C: applySatisfactionLoss()
+activate C
+C -> R: getWaitingQueue()
+activate R
+R -->> C: queue
+deactivate R
+C -> R: getTables()
+activate R
+R -->> C: tables
+deactivate R
+loop [for each table]
+    C -> T: isOccupied()
+    activate T
+    T -->> C: true (table1)
+    deactivate T
+    opt [occupied table]
+        C -> T: getCustomer()
+        activate T
+        T -->> C: VIP
+        deactivate T
+        C -> VIP: getSatisfactionLossPerTurn()
+        activate VIP
+        VIP -->> C: 5
+        deactivate VIP
+        C -> VIP: loseSatisfaction(5)
+        activate VIP
+        deactivate VIP
+        C -> VIP: isAbandoned()
+        activate VIP
+        VIP -->> C: false
+        deactivate VIP
+    end
+end
+note right of C
+VIP satisfaction: 100 to 95.
+end note
+deactivate C
+C -> CLI: showMessage(end of Turn 1)
+activate CLI
+deactivate CLI
+deactivate C
+
+note over CLI,C
+From Turn 2 onward, repeated turn-start calls,
+CLI input parsing, table validation, ordinary WAIT,
+end-turn display and routine satisfaction scans are omitted.
+Only new actions and significant state changes are expanded.
+end note
+
+== TURN 2: VIP ORDERS PASTA AND CHEF PREPARES UNIT 1 ==
+C -> C: runTurn(2)
+activate C
+C -> C: resolveServing()
+activate C
+loop [until valid Waiter action]
+    C -> CLI: askWaiterAction()
+    activate CLI
+    Manager -> CLI: input 2 (TAKE_ORDER)
+    CLI -->> C: WaiterAction.TAKE_ORDER
+    deactivate CLI
+    C -> C: doWaiterAction(TAKE_ORDER)
+    activate C
+    C -> C: takeOrder()
+    activate C
+    C -> C: askSeatedCustomer()
+    activate C
+    C -->> C: customer: VIPCustomer
+    deactivate C
+    C -> VIP: getStatus()
+    activate VIP
+    VIP -->> C: SEATED
+    deactivate VIP
+    opt [customer != null and status == SEATED]
+        C -> R: getMenu()
+        activate R
+        R -->> C: menu
+        deactivate R
+        C -> VIP: chooseItem(menu, random)
+        activate VIP
+        VIP -> M: getRandomItem(random)
+        activate M
+        M -->> VIP: food: Pasta
+        deactivate M
+        deactivate VIP
+        C -> VIP: getChoice()
+        activate VIP
+        VIP -->> C: food: Pasta
+        deactivate VIP
+        C -> P: calculateFinalPrice(customer, food)
+        activate P
+        P -> F: getPrice()
+        activate F
+        F -->> P: 1800 cents
+        deactivate F
+        P -> VIP: applyDiscount()
+        activate VIP
+        VIP -->> P: 10 percent
+        deactivate VIP
+        P -->> C: 1620 cents
+        deactivate P
+        C -> R: generateOrderId()
+        activate R
+        R -->> C: orderId
+        deactivate R
+        create O
+        C -> O: new Order(orderId, customer, food, 1620)
+        activate O
+        O -> F: getPrepUnits()
+        activate F
+        F -->> O: 2
+        deactivate F
+        note right of O
+        Status WAITING; 2 units remaining.
+        Final price locked at $16.20.
+        end note
+        deactivate O
+        C -> VIP: placeOrder(order)
+        activate VIP
+        deactivate VIP
+        C -> R: addOrder(order)
+        activate R
+        deactivate R
+        C -> CLI: showMessage(order confirmation)
+        activate CLI
+        deactivate CLI
+    end
+    C -->> C: true (takeOrder)
+    deactivate C
+    C -->> C: true (doWaiterAction)
+    deactivate C
+end
+loop [until valid Chef action]
+    C -> CLI: askChefAction()
+    activate CLI
+    Manager -> CLI: input 1 (PREPARE)
+    CLI -->> C: ChefAction.PREPARE
+    deactivate CLI
+    C -> C: doChefAction(PREPARE)
+    activate C
+    C -> C: askSeatedCustomer()
+    activate C
+    C -->> C: VIP
+    deactivate C
+    C -> VIP: getOrder()
+    activate VIP
+    VIP -->> C: order
+    deactivate VIP
+    C -> O: getStatus()
+    activate O
+    O -->> C: WAITING
+    deactivate O
+    opt [order != null and status is WAITING or PREPARING]
+        C -> R: getChef()
+        activate R
+        R -->> C: chef
+        deactivate R
+        C -> Chef: advance(order)
+        activate Chef
+        Chef -> O: prepareOneUnit()
+        activate O
+        note right of O
+        Status WAITING to PREPARING.
+        Remaining units: 2 to 1.
+        end note
+        deactivate O
+        deactivate Chef
+        C -> CLI: showMessage(cooked one unit; PREPARING)
+        activate CLI
+        deactivate CLI
+    end
+    C -->> C: true (doChefAction)
+    deactivate C
+end
+deactivate C
+note right of C
+End Turn 2: VIP waits for Pasta, 95 to 90 satisfaction.
+Routine end-of-turn processing follows Turn 1.
+end note
+deactivate C
+
+== TURN 3: SECOND PREPARATION UNIT ==
+C -> C: runTurn(3)
+activate C
+note right of C
+Repeated turn-start routines omitted.
+Waiter chooses WAIT; action handling is as in Turn 1.
+end note
+C -> C: resolveServing()
+activate C
+C -> CLI: askChefAction()
+activate CLI
+Manager -> CLI: input 1 (PREPARE)
+CLI -->> C: ChefAction.PREPARE
+deactivate CLI
+C -> C: doChefAction(PREPARE)
+activate C
+note right of C
+Customer selection, getOrder() and status checks
+repeat Turn 2 and are not redrawn.
+end note
+C -> R: getChef()
+activate R
+R -->> C: chef
+deactivate R
+C -> Chef: advance(order)
+activate Chef
+Chef -> O: prepareOneUnit()
+activate O
+O -> O: markReady()
+activate O
+note right of O
+Remaining units: 1 to 0.
+Status PREPARING to READY.
+end note
+deactivate O
+deactivate O
+deactivate Chef
+C -> CLI: showMessage(cooked one unit; READY)
+activate CLI
+deactivate CLI
+C -->> C: true (doChefAction)
+deactivate C
+deactivate C
+note right of C
+End Turn 3: VIP waits for service, 90 to 85 satisfaction.
+Pasta is READY for the Waiter's next turn.
+end note
+deactivate C
+
+== TURN 4: MANAGER PRIORITIZES SERVICE OR SEATING ==
+C -> C: runTurn(4)
+activate C
+
+C -> C: handleArrivals()
+activate C
+note right of C
+As in Turn 1, the scheduled new customer
+is created and added to the waiting queue.
+end note
+deactivate C
+
+C -> C: resolveServing()
+activate C
+C -> CLI: askWaiterAction()
+
+alt [selected: SERVE VIP]
+    activate CLI
+    Manager -> CLI: input 3 (SERVE)
+    CLI -->> C: WaiterAction.SERVE
+    deactivate CLI
+
+    C -> C: doWaiterAction(SERVE)
+    activate C
+    C -> C: serveOrder()
+    activate C
+    C -> C: askSeatedCustomer()
+    activate C
+    C -->> C: VIP
+    deactivate C
+    C -> VIP: getOrder()
+    activate VIP
+    VIP -->> C: order
+    deactivate VIP
+    C -> O: getStatus()
+    activate O
+    O -->> C: READY
+    deactivate O
+
+    opt [order exists and status == READY]
+        C -> R: getWaiter()
+        activate R
+        R -->> C: waiter
+        deactivate R
+        C -> W: serve(order)
+        activate W
+        W -> O: markServed()
+        activate O
+        note right of O
+        Order READY to SERVED.
+        VIP starts EATING.
+        end note
+        deactivate O
+        deactivate W
+        C -> CLI: showMessage(serving confirmation)
+        activate CLI
+        deactivate CLI
+        C -> VIP: onServed()
+        activate VIP
+        VIP -->> C: null
+        deactivate VIP
+    end
+
+    C -->> C: true (serveOrder)
+    deactivate C
+    C -->> C: true (doWaiterAction)
+    deactivate C
+
+    note right of C
+    One Waiter action is spent serving VIP.
+    New customer remains QUEUING and loses
+    8 (Regular) or 12 (Critic) at turn end.
+    VIP stays at 85 satisfaction.
+    end note
+
+else [alternative: SEAT new customer]
+    activate CLI
+    Manager -> CLI: input 1 (SEAT)
+    CLI -->> C: WaiterAction.SEAT
+    deactivate CLI
+    C -> C: doWaiterAction(SEAT)
+    activate C
+    C -> C: seatCustomer()
+    activate C
+    note right of C
+    As shown in Turn 1, seat newcomer at Table 2.
+    VIP remains READY_TO_SERVE and loses 5
+    (85 to 80 satisfaction) at turn end.
+    end note
+    C -->> C: true (seatCustomer)
+    deactivate C
+    C -->> C: true (doWaiterAction)
+    deactivate C
+end
+
+note right of C
+Selected path continues with SERVE.
+Chef chooses WAIT (as in Turn 1).
+end note
+deactivate C
+
+deactivate C
+
+== TURN 5: SEAT CUSTOMER 2; VIP FINISHES EATING ==
+C -> C: runTurn(5)
+activate C
+
+C -> C: recordEatingCustomers()
+activate C
+
+C -> VIP: getStatus()
+activate VIP
+VIP -->> C: EATING
+deactivate VIP
+
+note right of C
+VIP is EATING at the start of Turn 5.
+Add VIP to eatingAtTurnStart.
+Repeated table checks are omitted.
+end note
+
+deactivate C
+
+C -> C: resolveServing()
+activate C
+
+C -> CLI: askWaiterAction()
+activate CLI
+Manager -> CLI: input 1 (SEAT Customer 2)
+CLI -->> C: WaiterAction.SEAT
+deactivate CLI
+
+C -> C: doWaiterAction(SEAT)
+activate C
+C -> C: seatCustomer()
+activate C
+note right of C
+Customer 2 is seated at free Table 2.
+Seating steps are the same as Turn 1; omitted.
+end note
+C -->> C: true (seatCustomer)
+deactivate C
+C -->> C: true (doWaiterAction)
+deactivate C
+
+C -> CLI: askChefAction()
+activate CLI
+Manager -> CLI: input 2 (WAIT)
+CLI -->> C: ChefAction.WAIT
+deactivate CLI
+C -> C: doChefAction(WAIT)
+activate C
+C -->> C: true
+deactivate C
+
+note right of C
+No unprepared orders exist on this selected path.
+Chef WAIT follows the procedure shown in Turn 1.
+end note
+
+deactivate C
+
+C -> C: EatingAndPayment()
+activate C
+note right of C
+VIP is not in the payment queue yet.
+Payment occurs in Turn 6.
+end note
+loop [for each customer in eatingAtTurnStart]
+    C -> VIP: getOrder()
+    activate VIP
+    VIP -->> C: order
+    deactivate VIP
+    C -> O: markReadyPay()
+    activate O
+    note right of O
+    Order SERVED to READY_TO_PAY.
+    end note
+    deactivate O
+    note right of C
+    VIP joins readyToPayLine for Turn 6.
+    end note
+end
+deactivate C
+deactivate C
+
+== TURN 6: VIP PAYMENT WHILE RESTAURANT CONTINUES ==
+C -> C: runTurn(6)
+activate C
+
+C -> C: resolveServing()
+activate C
+note right of C
+Waiter may TAKE_ORDER from the new customer
+at Table 2; Chef may PREPARE that order.
+Repeated ordering/preparation details are omitted.
+These actions do not prevent automatic VIP payment.
+end note
+deactivate C
+
+C -> C: EatingAndPayment()
+activate C
+note right of C
+readyToPayLine.poll() returns VIP.
+Cashier processes one payer independently of Waiter.
+end note
+opt [payer != null]
+    C -> VIP: getOrder()
+    activate VIP
+    VIP -->> C: order
+    deactivate VIP
+    C -> O: getPriceInCents()
+    activate O
+    O -->> C: 1620 cents
+    deactivate O
+    C -> R: getCashier()
+    activate R
+    R -->> C: cashier
+    deactivate R
+    C -> Cashier: collectPayment(order)
+    activate Cashier
+    Cashier -> O: markPaid()
+    activate O
+    note right of O
+    Order READY_TO_PAY to PAID.
+    end note
+    deactivate O
+    deactivate Cashier
+    C -> VIP: getTable()
+    activate VIP
+    VIP -->> C: table1
+    deactivate VIP
+    C -> T: free()
+    activate T
+    deactivate T
+    C -> VIP: getSatisfaction()
+    activate VIP
+    VIP -->> C: 85
+    deactivate VIP
+    note right of C
+    Revenue +1620 cents; paid count +1.
+    Record VIP satisfaction 85.
+    Table 1 is now available again.
+    end note
+    C -> CLI: showMessage(VIP paid $16.20 and left)
+    activate CLI
+    deactivate CLI
+end
+deactivate C
+deactivate C
+
+== TURNS 7-18 AND FINAL RESULT ==
+note right of C
+Turns 7 to 18 repeat the established game flow.
+Other customers' actions are omitted.
+end note
+C -> CLI: showMessage(final results and paid count)
+activate CLI
+deactivate CLI
+C -> CLI: showMessage(revenue)
+activate CLI
+deactivate CLI
+C -> C: getAverageSatisfactionOfPaidCustomer()
+activate C
+C -->> C: average satisfaction
+deactivate C
+C -> CLI: showMessage(average satisfaction)
+activate CLI
+deactivate CLI
+C -> C: evalResult()
+activate C
+opt [paid count >= 4 and revenue >= 4500 cents]
+    C -> C: getAverageSatisfactionOfPaidCustomer()
+    activate C
+    C -->> C: average satisfaction
+    deactivate C
+end
+alt [all three conditions met, including average >= 60]
+    C -->> C: Result.VICTORY
+else [otherwise]
+    C -->> C: Result.DEFEAT
+end
+deactivate C
+alt [evalResult() == Result.VICTORY]
+    C -> CLI: showMessage(success)
+    activate CLI
+    deactivate CLI
+else [evalResult() == Result.DEFEAT]
+    C -> CLI: showMessage(defeat)
+    activate CLI
+    deactivate CLI
+end
+deactivate C
+@enduml
